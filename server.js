@@ -16,22 +16,24 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname  = path.dirname(__filename)
 
 const app = express()
+
 app.use(cors({
-  origin: [
-    'http://localhost:5173',
-    'https://brillante-elegance-frontend.vercel.app',
-  ],
-  credentials: true,
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }))
+
+app.options('*', cors())
 app.use(express.json())
 
-// Static uploads folder
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
 
 app.use('/api/auth',     authRoutes)
 app.use('/api/products', productRoutes)
 app.use('/api/orders',   orderRoutes)
 app.use('/api/reviews',  reviewRoutes)
+
+app.get('/', (req, res) => res.send('Brillante Elegance API running'))
 
 app.use((err, req, res, next) => {
   const statusCode = res.statusCode === 200 ? 500 : res.statusCode
@@ -40,8 +42,6 @@ app.use((err, req, res, next) => {
     stack: process.env.NODE_ENV === 'production' ? null : err.stack,
   })
 })
-
-app.get('/', (req, res) => res.send('Brillante Elegance API'))
 
 const PORT = process.env.PORT || 5000
 app.listen(PORT, () => console.log('Server running on port ' + PORT))
