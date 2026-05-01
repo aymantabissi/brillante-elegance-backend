@@ -16,8 +16,7 @@ router.post('/upload', protect, adminOnly, upload.single('image'), asyncHandler(
     res.status(400)
     throw new Error('Aucun fichier uploade')
   }
-  const imageUrl = '/uploads/' + req.file.filename
-  res.json({ imageUrl })
+  res.json({ imageUrl: req.file.path })
 }))
 
 router.get('/',       getProducts)
