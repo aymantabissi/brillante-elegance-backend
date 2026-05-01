@@ -19,7 +19,7 @@ const app = express()
 app.use(cors({
   origin: [
     'http://localhost:5173',
-    'https://TONURL.vercel.app',
+    'https://brillante-elegance-frontend.vercel.app',
   ],
   credentials: true,
 }))
