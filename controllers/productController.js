@@ -5,11 +5,12 @@ import Product from '../models/Product.js'
 // @route   GET /api/products
 // @access  Public
 export const getProducts = asyncHandler(async (req, res) => {
-  const { category, search, hot } = req.query
+  const { category, search, hot, featured } = req.query  // ← zid featured
   let query = {}
   if (category && category !== 'all') query.category = category
   if (search) query.name = { $regex: search, $options: 'i' }
   if (hot === 'true') query.hot = true
+  if (featured === 'true') query.featured = true  // ← zid hadi
   const products = await Product.find(query).sort({ createdAt: -1 })
   res.json(products)
 })

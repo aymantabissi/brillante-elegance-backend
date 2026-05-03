@@ -7,14 +7,14 @@ const productSchema = new mongoose.Schema({
   oldPrice: { type: Number, default: 0 },
   category: {
     type: String,
-    enum: ['colliers', 'bracelets', 'bagues', 'lunettes', 'montres', 'autres','Sacs'],
+    enum: ['colliers', 'bracelets', 'bagues', 'lunettes', 'montres', 'autres','Sacas'],
     default: 'autres',
   },
   image: { type: String, default: '' },
   stock: { type: Number, default: 0 },
-  rating:     { type: Number, default: 0 },
-numReviews: { type: Number, default: 0 },
   hot: { type: Boolean, default: false },
+  featured: { type: Boolean, default: false }, // ← zid hadi
+
   discount: { type: Number, default: 0 },
 }, { timestamps: true })
 
