@@ -9,13 +9,13 @@ export const getPromoCodes = asyncHandler(async (req, res) => {
 
 // POST create — admin
 export const createPromoCode = asyncHandler(async (req, res) => {
-  const { code, discount, maxUses, expiresAt } = req.body
+  const { code, discount, maxUses, expiresAt, products } = req.body
   const exists = await PromoCode.findOne({ code: code.toUpperCase() })
-  if (exists) {
-    res.status(400)
-    throw new Error('Code existe deja')
-  }
-  const promo = await PromoCode.create({ code, discount, maxUses, expiresAt })
+  if (exists) { res.status(400); throw new Error('Code existe deja') }
+  const promo = await PromoCode.create({
+    code, discount, maxUses, expiresAt,
+    products: products || [], // ← khawya = tous les produits
+  })
   res.status(201).json(promo)
 })
 
@@ -36,18 +36,31 @@ export const togglePromoCode = asyncHandler(async (req, res) => {
 
 // POST validate — client
 export const validatePromoCode = asyncHandler(async (req, res) => {
-  const { code } = req.body
+  const { code, productIds } = req.body // ← zid productIds
   const promo = await PromoCode.findOne({ code: code.toUpperCase() })
 
-  if (!promo) { res.status(404); throw new Error('Code invalide') }
-  if (!promo.active) { res.status(400); throw new Error('Code desactive') }
-  if (promo.usedCount >= promo.maxUses) { res.status(400); throw new Error('Code epuise') }
+  if (!promo)  { res.status(404); throw new Error('Code invalide') }
+  if (!promo.active) { res.status(400); throw new Error('Code désactivé') }
+  if (promo.usedCount >= promo.maxUses) { res.status(400); throw new Error('Code épuisé') }
   if (promo.expiresAt && new Date() > new Date(promo.expiresAt)) {
-    res.status(400)
-    throw new Error('Code expire')
+    res.status(400); throw new Error('Code expiré')
   }
 
-  res.json({ discount: promo.discount, code: promo.code })
+  // Ila kayna products spécifiques — tchek
+  if (promo.products && promo.products.length > 0 && productIds && productIds.length > 0) {
+    const promoProductIds = promo.products.map(function(id) { return id.toString() })
+    const hasMatch = productIds.some(function(id) { return promoProductIds.includes(id) })
+    if (!hasMatch) {
+      res.status(400)
+      throw new Error('Ce code n\'est pas valable pour ces produits')
+    }
+  }
+
+  res.json({
+    discount: promo.discount,
+    code: promo.code,
+    products: promo.products, // ← return bach client y3rf
+  })
 })
 
 // POST use — katkhdm 3nd checkout
