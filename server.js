@@ -8,7 +8,7 @@ import authRoutes    from './routes/authRoutes.js'
 import productRoutes from './routes/productRoutes.js'
 import orderRoutes   from './routes/orderRoutes.js'
 import reviewRoutes  from './routes/reviewRoutes.js'
-import promoRoutes from './routes/promoRoutes.js'
+import promoRoutes   from './routes/promoRoutes.js'
 
 dotenv.config()
 connectDB()
@@ -18,38 +18,36 @@ const __dirname  = path.dirname(__filename)
 
 const app = express()
 
+// ── CORS ──────────────────────────────────────────────────────────────────
 app.use(cors({
-  origin: function(origin, callback) {
-    callback(null, true)
-  },
+  origin: [
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "https://brillanteelegance.ma",
+    "https://www.brillanteelegance.ma",
+  ],
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
 }))
 
-app.use(function(req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*')
-  res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS')
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end()
-  }
-  next()
-})
+// Preflight — important
+app.options("*", cors())
 
+// ── MIDDLEWARES ────────────────────────────────────────────────────────────
 app.use(express.json())
-
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
 
+// ── ROUTES ────────────────────────────────────────────────────────────────
 app.use('/api/auth',     authRoutes)
 app.use('/api/products', productRoutes)
 app.use('/api/orders',   orderRoutes)
 app.use('/api/reviews',  reviewRoutes)
-app.use('/api/promos', promoRoutes)
+app.use('/api/promos',   promoRoutes)
 
+app.get('/', (req, res) => res.send('Brillante Elegance API running ✅'))
 
-app.get('/', (req, res) => res.send('Brillante Elegance API running'))
-
+// ── ERROR HANDLER ──────────────────────────────────────────────────────────
 app.use((err, req, res, next) => {
   const statusCode = res.statusCode === 200 ? 500 : res.statusCode
   res.status(statusCode).json({
@@ -59,4 +57,4 @@ app.use((err, req, res, next) => {
 })
 
 const PORT = process.env.PORT || 5000
-app.listen(PORT, () => console.log('Server running on port ' + PORT))
+app.listen(PORT, () => console.log('🚀 Server running on port ' + PORT))
