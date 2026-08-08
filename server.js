@@ -31,19 +31,20 @@ app.use(cors({
   allowedHeaders: ["Content-Type", "Authorization"],
 }))
 
-// Preflight — important
-app.options("*", cors())
+app.options(/.*/, cors())
 
+// Preflight — important
+app.options(/.*/, cors())
 // ── MIDDLEWARES ────────────────────────────────────────────────────────────
 app.use(express.json())
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
 
 // ── ROUTES ────────────────────────────────────────────────────────────────
-app.use('/api/auth',     authRoutes)
+app.use('/api/auth', authRoutes)
 app.use('/api/products', productRoutes)
-app.use('/api/orders',   orderRoutes)
-app.use('/api/reviews',  reviewRoutes)
-app.use('/api/promos',   promoRoutes)
+app.use('/api/orders', orderRoutes)
+app.use('/api/reviews', reviewRoutes)
+app.use('/api/promos', promoRoutes)
 
 app.get('/', (req, res) => res.send('Brillante Elegance API running ✅'))
 
