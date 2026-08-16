@@ -32,6 +32,8 @@ const ALLOWED_ORIGINS = [
   "http://localhost:3000",
   "https://brillanteelegance.ma",
   "https://www.brillanteelegance.ma",
+  "https://brillante-elegance-frontend-git-main-aymantabissis-projects.vercel.app",
+  "https://brillante-elegance-frontend.vercel.app",
 ]
 
 // ── CORS ──────────────────────────────────────────────────────────────────
