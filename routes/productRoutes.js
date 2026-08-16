@@ -3,15 +3,14 @@ import {
   getProducts, getProductById,
   createProduct, updateProduct, deleteProduct,
 } from '../controllers/productController.js'
-import { protect } from '../middleware/authMiddleware.js'
-import { adminOnly } from '../middleware/authMiddleware.js'
+import { protect, managerOrAdmin } from '../middleware/authMiddleware.js'
 import upload from '../middleware/uploadMiddleware.js'
 import asyncHandler from 'express-async-handler'
 
 const router = express.Router()
 
 // Upload image route
-router.post('/upload', protect, adminOnly, upload.single('image'), asyncHandler(async (req, res) => {
+router.post('/upload', protect, managerOrAdmin, upload.single('image'), asyncHandler(async (req, res) => {
   if (!req.file) {
     res.status(400)
     throw new Error('Aucun fichier uploade')
@@ -21,8 +20,8 @@ router.post('/upload', protect, adminOnly, upload.single('image'), asyncHandler(
 
 router.get('/',       getProducts)
 router.get('/:id',    getProductById)
-router.post('/',      protect, adminOnly, createProduct)
-router.put('/:id',    protect, adminOnly, updateProduct)
-router.delete('/:id', protect, adminOnly, deleteProduct)
+router.post('/',      protect, managerOrAdmin, createProduct)
+router.put('/:id',    protect, managerOrAdmin, updateProduct)
+router.delete('/:id', protect, managerOrAdmin, deleteProduct)
 
 export default router

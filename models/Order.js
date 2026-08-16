@@ -1,30 +1,179 @@
 import mongoose from 'mongoose'
 
-const orderSchema = new mongoose.Schema({
-  client: {
-    name: String,
-    phone: String,
-    city: String,
-    address: String,
-    email: String,
+const orderSchema = new mongoose.Schema(
+  {
+    // =========================
+    // CLIENT
+    // =========================
+    client: {
+      name: {
+        type: String,
+        required: true,
+      },
+      phone: {
+        type: String,
+        required: true,
+      },
+      city: {
+        type: String,
+        required: true,
+      },
+      address: {
+        type: String,
+        required: true,
+      },
+      email: {
+        type: String,
+        default: '',
+      },
+    },
+
+    // =========================
+    // ARTICLES
+    // =========================
+    items: [
+      {
+        productId: {
+          type: String,
+          required: true,
+        },
+        name: {
+          type: String,
+          required: true,
+        },
+        price: {
+          type: Number,
+          required: true,
+        },
+        qty: {
+          type: Number,
+          required: true,
+          min: 1,
+        },
+        image: {
+          type: String,
+          default: '',
+        },
+      },
+    ],
+
+    // =========================
+    // TOTAL
+    // =========================
+    total: {
+      type: Number,
+      required: true,
+    },
+
+    // =========================
+    // PAYMENT STATUS
+    // =========================
+    paymentStatus: {
+      type: String,
+      enum: ['pending', 'paid', 'cancelled'],
+      default: 'pending',
+    },
+
+    // =========================
+    // ORDER PROCESSING STATUS
+    // =========================
+    orderStatus: {
+      type: String,
+      enum: [
+        'not_processed',
+        'not_required',
+        'shipping',
+        'delivered',
+      ],
+      default: 'not_processed',
+    },
+
+    // =========================
+    // DELIVERY METHOD
+    // =========================
+    deliveryMethod: {
+      type: String,
+      enum: [
+        'safi_10dh',
+        'outside_safi_35dh',
+      ],
+      default: 'safi_10dh',
+    },
+
+    // =========================
+    // NOTE
+    // =========================
+    note: {
+      type: String,
+      default: '',
+    },
+
+    // =========================
+    // AFFILIATION (creator)
+    // =========================
+    promoCode: {
+      type: String,
+      default: '',
+    },
+
+    creator: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      default: null,
+    },
+
+    commissionAmount: {
+      type: Number,
+      default: 0,
+    },
+
+    commissionCredited: {
+      type: Boolean,
+      default: false,
+    },
+
+    // =========================
+    // COLISSPEED
+    // =========================
+    colisSpeed: {
+      tracking: {
+        type: String,
+        default: '',
+      },
+
+      status: {
+        type: String,
+        default: '',
+      },
+
+      paymentStatus: {
+        type: String,
+        default: '',
+      },
+
+      deliveryPerson: {
+        name: {
+          type: String,
+          default: '',
+        },
+
+        phone: {
+          type: String,
+          default: '',
+        },
+      },
+
+      lastUpdate: {
+        type: Date,
+        default: null,
+      },
+    },
   },
-  items: [
-    {
-      productId: String,
-      name: String,
-      price: Number,
-      qty: Number,
-      image: String,
-    }
-  ],
-  total: { type: Number, required: true },
-  status: {
-    type: String,
-    enum: ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled'],
-    default: 'pending',
-  },
-  note: { type: String, default: '' },
-}, { timestamps: true })
+  {
+    timestamps: true,
+  }
+)
 
 const Order = mongoose.model('Order', orderSchema)
+
 export default Order

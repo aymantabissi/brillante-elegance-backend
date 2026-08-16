@@ -3,19 +3,63 @@ import asyncHandler from 'express-async-handler'
 
 // GET all — admin
 export const getPromoCodes = asyncHandler(async (req, res) => {
-  const codes = await PromoCode.find().sort({ createdAt: -1 })
+  const codes = await PromoCode.find().populate('owner', 'name email').sort({ createdAt: -1 })
   res.json(codes)
 })
 
 // POST create — admin
 export const createPromoCode = asyncHandler(async (req, res) => {
-  const { code, discount, maxUses, expiresAt, products } = req.body
+  const { code, discount, maxUses, expiresAt, products, owner } = req.body
   const exists = await PromoCode.findOne({ code: code.toUpperCase() })
   if (exists) { res.status(400); throw new Error('Code existe deja') }
+
+  if (owner) {
+    const alreadyHasCode = await PromoCode.findOne({ owner })
+    if (alreadyHasCode) {
+      res.status(400)
+      throw new Error('Ce createur possede deja un code promo')
+    }
+  }
+
   const promo = await PromoCode.create({
     code, discount, maxUses, expiresAt,
     products: products || [], // ← khawya = tous les produits
+    owner: owner || null,
   })
+  res.status(201).json(promo)
+})
+
+// POST create — creator (auto-service, un seul code, remise fixe 10%)
+export const createMyPromoCode = asyncHandler(async (req, res) => {
+  const { code } = req.body
+
+  if (!code || !code.trim()) {
+    res.status(400)
+    throw new Error('Le code est requis')
+  }
+
+  const alreadyHasCode = await PromoCode.findOne({ owner: req.user._id })
+  if (alreadyHasCode) {
+    res.status(400)
+    throw new Error('Vous avez deja un code promo')
+  }
+
+  const normalizedCode = code.trim().toUpperCase()
+
+  const exists = await PromoCode.findOne({ code: normalizedCode })
+  if (exists) {
+    res.status(400)
+    throw new Error('Ce code existe deja, choisissez-en un autre')
+  }
+
+  const promo = await PromoCode.create({
+    code: normalizedCode,
+    discount: 10,
+    maxUses: 100000,
+    products: [],
+    owner: req.user._id,
+  })
+
   res.status(201).json(promo)
 })
 

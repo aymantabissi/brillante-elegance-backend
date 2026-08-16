@@ -9,6 +9,9 @@ const promoCodeSchema = new mongoose.Schema({
   expiresAt:  { type: Date, default: null },
     products:  [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }], // ← khawya = tous
 
+  // Creator (affiliation) — proprietaire du code, null = code admin classique
+  owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
+
 }, { timestamps: true })
 
 export default mongoose.model('PromoCode', promoCodeSchema)

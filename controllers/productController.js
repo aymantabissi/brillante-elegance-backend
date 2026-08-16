@@ -5,12 +5,12 @@ import Product from '../models/Product.js'
 // @route   GET /api/products
 // @access  Public
 export const getProducts = asyncHandler(async (req, res) => {
-  const { category, search, hot, featured } = req.query  // ← zid featured
+  const { category, search, hot, featured } = req.query
   let query = {}
   if (category && category !== 'all') query.category = category
   if (search) query.name = { $regex: search, $options: 'i' }
   if (hot === 'true') query.hot = true
-  if (featured === 'true') query.featured = true  // ← zid hadi
+  if (featured === 'true') query.featured = true
   const products = await Product.find(query).sort({ createdAt: -1 })
   res.json(products)
 })
@@ -31,15 +31,24 @@ export const getProductById = asyncHandler(async (req, res) => {
 // @route   POST /api/products
 // @access  Admin
 export const createProduct = asyncHandler(async (req, res) => {
-  const { name, price, oldPrice, category, description, image, stock, hot, discount } = req.body
+  const {
+    name, price, oldPrice, category,
+    description, image, images, stock, hot, discount,
+    variants, hasVariants,
+  } = req.body
+
   if (!name || !price) {
     res.status(400)
     throw new Error('Nom et prix sont requis')
   }
+
   const product = await Product.create({
     name, price, oldPrice, category,
-    description, image, stock, hot, discount,
+    description, image, images: images || [], stock, hot, discount,
+    variants: variants || [],
+    hasVariants: hasVariants || false,
   })
+
   res.status(201).json(product)
 })
 

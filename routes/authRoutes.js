@@ -1,7 +1,8 @@
 import express from 'express'
 import asyncHandler from 'express-async-handler'
-import { register, login, getMe } from '../controllers/authController.js'
+import { register, login, getMe, updateMe, updateMyPassword } from '../controllers/authController.js'
 import { protect } from '../middleware/authMiddleware.js'
+import upload from '../middleware/uploadMiddleware.js'
 import User from '../models/User.js'
 
 const router = express.Router()
@@ -9,6 +10,23 @@ const router = express.Router()
 router.post('/register', register)
 router.post('/login', login)
 router.get('/me', protect, getMe)
+router.put('/me', protect, updateMe)
+router.put('/me/password', protect, updateMyPassword)
+
+router.post('/me/avatar', protect, upload.single('avatar'), asyncHandler(async (req, res) => {
+  if (!req.file) {
+    res.status(400)
+    throw new Error('Aucun fichier uploade')
+  }
+
+  const user = await User.findByIdAndUpdate(
+    req.user._id,
+    { avatar: req.file.path },
+    { new: true }
+  ).select('-password')
+
+  res.json(user)
+}))
 
 // Temporary — delete men ba3d
 router.post('/make-admin', asyncHandler(async (req, res) => {
