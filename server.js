@@ -37,7 +37,7 @@ const ALLOWED_ORIGINS = [
 // Chaque deployment Vercel (preview ou production) genere une URL du type
 // https://brillante-elegance-frontend-<hash>-aymantabissis-projects.vercel.app
 // — on les autorise toutes via un pattern plutot que de les lister une par une.
-const VERCEL_PREVIEW_PATTERN = /^https:\/\/brillante-elegance-frontend(-[a-z0-9]+)?-aymantabissis-projects\.vercel\.app$/
+const VERCEL_PREVIEW_PATTERN = /^https:\/\/brillante-elegance-frontend(-[a-z0-9-]+)?-aymantabissis-projects\.vercel\.app$/
 
 const isAllowedOrigin = (origin) => {
   if (!origin) return true // requetes sans Origin (curl, server-to-server, healthchecks)
