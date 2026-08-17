@@ -32,13 +32,29 @@ const ALLOWED_ORIGINS = [
   "http://localhost:3000",
   "https://brillanteelegance.ma",
   "https://www.brillanteelegance.ma",
-  "https://brillante-elegance-frontend-git-main-aymantabissis-projects.vercel.app",
-  "https://brillante-elegance-frontend.vercel.app",
 ]
+
+// Chaque deployment Vercel (preview ou production) genere une URL du type
+// https://brillante-elegance-frontend-<hash>-aymantabissis-projects.vercel.app
+// — on les autorise toutes via un pattern plutot que de les lister une par une.
+const VERCEL_PREVIEW_PATTERN = /^https:\/\/brillante-elegance-frontend(-[a-z0-9]+)?-aymantabissis-projects\.vercel\.app$/
+
+const isAllowedOrigin = (origin) => {
+  if (!origin) return true // requetes sans Origin (curl, server-to-server, healthchecks)
+  if (ALLOWED_ORIGINS.includes(origin)) return true
+  if (VERCEL_PREVIEW_PATTERN.test(origin)) return true
+  return false
+}
 
 // ── CORS ──────────────────────────────────────────────────────────────────
 app.use(cors({
-  origin: ALLOWED_ORIGINS,
+  origin: (origin, callback) => {
+    if (isAllowedOrigin(origin)) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS: ' + origin))
+    }
+  },
   credentials: true,
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
@@ -79,7 +95,13 @@ const httpServer = http.createServer(app)
 
 const io = new SocketIOServer(httpServer, {
   cors: {
-    origin: ALLOWED_ORIGINS,
+    origin: (origin, callback) => {
+      if (isAllowedOrigin(origin)) {
+        callback(null, true)
+      } else {
+        callback(new Error('Not allowed by CORS: ' + origin))
+      }
+    },
     credentials: true,
   },
 })
