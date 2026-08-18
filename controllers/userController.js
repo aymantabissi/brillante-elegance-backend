@@ -1,5 +1,6 @@
 import asyncHandler from 'express-async-handler'
 import User from '../models/User.js'
+import { sendCreatorApprovedEmail } from '../services/emailService.js'
 
 // =====================================================
 // GET ALL USERS
@@ -451,11 +452,22 @@ export const updateUserStatus =
         )
       }
 
+      const wasInactive =
+        user.isActive === false
+
       user.isActive =
         isActive
 
       const updatedUser =
         await user.save()
+
+      if (
+        wasInactive &&
+        isActive &&
+        updatedUser.role === 'creator'
+      ) {
+        sendCreatorApprovedEmail(updatedUser)
+      }
 
       res.json({
         message: isActive
