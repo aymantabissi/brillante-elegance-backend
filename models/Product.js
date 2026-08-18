@@ -16,6 +16,7 @@ const productSchema = new mongoose.Schema({
   hot: { type: Boolean, default: false },
   featured: { type: Boolean, default: false },
   discount: { type: Number, default: 0 },
+  freeShipping: { type: Boolean, default: false },
 
   // =====================================================
   // VARIANTES (couleur, taille, etc.)

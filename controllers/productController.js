@@ -33,7 +33,7 @@ export const getProductById = asyncHandler(async (req, res) => {
 export const createProduct = asyncHandler(async (req, res) => {
   const {
     name, price, oldPrice, category,
-    description, image, images, stock, hot, discount,
+    description, image, images, stock, hot, discount, freeShipping,
     variants, hasVariants,
   } = req.body
 
@@ -44,7 +44,7 @@ export const createProduct = asyncHandler(async (req, res) => {
 
   const product = await Product.create({
     name, price, oldPrice, category,
-    description, image, images: images || [], stock, hot, discount,
+    description, image, images: images || [], stock, hot, discount, freeShipping,
     variants: variants || [],
     hasVariants: hasVariants || false,
   })
