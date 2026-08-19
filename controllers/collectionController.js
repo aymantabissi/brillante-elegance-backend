@@ -25,7 +25,7 @@ export const getCollections = asyncHandler(async (req, res) => {
 // @route   PUT /api/collections/:id
 // @access  Manager/Admin
 export const updateCollection = asyncHandler(async (req, res) => {
-  const { image, title, label } = req.body
+  const { image, title, label, category } = req.body
 
   const collection = await Collection.findById(req.params.id)
   if (!collection) {
@@ -33,9 +33,10 @@ export const updateCollection = asyncHandler(async (req, res) => {
     throw new Error('Collection introuvable')
   }
 
-  if (image !== undefined) collection.image = image
-  if (title !== undefined) collection.title = title
-  if (label !== undefined) collection.label = label
+  if (image !== undefined)    collection.image = image
+  if (title !== undefined)    collection.title = title
+  if (label !== undefined)    collection.label = label
+  if (category !== undefined) collection.category = category
 
   const updated = await collection.save()
   res.json(updated)
