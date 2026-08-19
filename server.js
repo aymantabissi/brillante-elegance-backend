@@ -18,6 +18,7 @@ import creatorRoutes from './routes/creatorRoutes.js'
 import messageRoutes from './routes/messageRoutes.js'
 import collectionRoutes from './routes/collectionRoutes.js'
 import siteSettingsRoutes from './routes/siteSettingsRoutes.js'
+import feedRoutes from './routes/feedRoutes.js'
 import User from './models/User.js'
 import Message from './models/Message.js'
 import ChatRead from './models/ChatRead.js'
@@ -79,6 +80,7 @@ app.use('/api/creator', creatorRoutes)
 app.use('/api/messages', messageRoutes)
 app.use('/api/collections', collectionRoutes)
 app.use('/api/settings', siteSettingsRoutes)
+app.use('/api/feed', feedRoutes)
 
 app.get('/', (req, res) => res.send('Brillante Elegance API running ✅'))
 
