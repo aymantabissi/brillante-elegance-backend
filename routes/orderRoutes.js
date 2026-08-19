@@ -341,7 +341,7 @@ router.post(
         orderStatus || 'not_processed',
 
       deliveryMethod:
-        deliveryMethod || 'outside_safi_35dh',
+        deliveryMethod || 'national_20dh',
 
       promoCode: promoCode || '',
       creator,
@@ -795,6 +795,7 @@ router.patch(
     const allowedMethods = [
       'safi_10dh',
       'outside_safi_35dh',
+      'national_20dh',
     ]
 
     if (

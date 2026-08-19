@@ -96,8 +96,9 @@ const orderSchema = new mongoose.Schema(
       enum: [
         'safi_10dh',
         'outside_safi_35dh',
+        'national_20dh',
       ],
-      default: 'safi_10dh',
+      default: 'national_20dh',
     },
 
     // =========================
