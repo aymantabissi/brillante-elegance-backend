@@ -15,6 +15,13 @@ const siteSettingsSchema = new mongoose.Schema({
     text:    { type: String, default: '' },
     code:    { type: String, default: '' },
   },
+  sectionTitles: {
+    collectionsEyebrow: { type: String, default: '' },
+    collectionsTitle:   { type: String, default: '' },
+    trendingTitle:      { type: String, default: '' },
+    dealsBannerText:    { type: String, default: '' },
+    instagramTitle:     { type: String, default: '' },
+  },
 }, { timestamps: true })
 
 const SiteSettings = mongoose.model('SiteSettings', siteSettingsSchema)

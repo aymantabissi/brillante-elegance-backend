@@ -29,6 +29,13 @@ const DEFAULT_SETTINGS = {
     text: "SOLDES D'ÉTÉ — -15% sur tous les produits.",
     code: 'foryou50',
   },
+  sectionTitles: {
+    collectionsEyebrow: 'Explorez',
+    collectionsTitle:   'Nos Collections',
+    trendingTitle:      'Produits Tendance',
+    dealsBannerText:    "Soldes d'Été — Jusqu'à -15%",
+    instagramTitle:     'Suivez-nous sur Instagram',
+  },
 }
 
 // @desc    Get site settings (hero slider, bandes d'images, bandeau promo)
@@ -48,7 +55,7 @@ export const getSiteSettings = asyncHandler(async (req, res) => {
 // @route   PUT /api/settings
 // @access  Manager/Admin
 export const updateSiteSettings = asyncHandler(async (req, res) => {
-  const { heroSlides, stripImages, instagramImages, promoBar } = req.body
+  const { heroSlides, stripImages, instagramImages, promoBar, sectionTitles } = req.body
 
   let settings = await SiteSettings.findOne()
   if (!settings) {
@@ -59,6 +66,7 @@ export const updateSiteSettings = asyncHandler(async (req, res) => {
   if (stripImages !== undefined)     settings.stripImages = stripImages
   if (instagramImages !== undefined) settings.instagramImages = instagramImages
   if (promoBar !== undefined)        settings.promoBar = { ...settings.promoBar.toObject(), ...promoBar }
+  if (sectionTitles !== undefined)   settings.sectionTitles = { ...settings.sectionTitles.toObject(), ...sectionTitles }
 
   const updated = await settings.save()
   res.json(updated)
