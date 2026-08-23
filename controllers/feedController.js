@@ -35,19 +35,29 @@ export const getProductsFeed = asyncHandler(async (req, res) => {
     const productType = CATEGORY_LABELS[p.category] || 'Bijoux'
     const image = p.image && p.image.startsWith('http') ? p.image : ''
 
+    const isWatch = p.category === 'montres'
+    const description = isWatch
+      ? (p.description || p.name) + ' — Mouvement : Quartz'
+      : (p.description || p.name)
+
     return `
     <item>
       <g:id>${escapeXml(p._id)}</g:id>
       <g:title>${escapeXml(p.name)}</g:title>
-      <g:description>${escapeXml(p.description || p.name)}</g:description>
+      <g:description>${escapeXml(description)}</g:description>
       <g:link>${escapeXml(siteUrl + '/product/' + p._id)}</g:link>
       <g:image_link>${escapeXml(image)}</g:image_link>
       <g:condition>new</g:condition>
       <g:availability>${availability}</g:availability>
       <g:price>${price.toFixed(2)} MAD</g:price>
-      <g:brand>Brillante Élégance</g:brand>
+      <g:brand>brillante_elegance</g:brand>
       <g:product_type>${escapeXml(productType)}</g:product_type>
-      <g:google_product_category>Apparel &amp; Accessories &gt; Jewelry</g:google_product_category>
+      <g:google_product_category>Apparel &amp; Accessories &gt; Jewelry</g:google_product_category>${isWatch ? `
+      <g:product_detail>
+        <g:section_name>Caractéristiques</g:section_name>
+        <g:attribute_name>Mouvement</g:attribute_name>
+        <g:attribute_value>Quartz</g:attribute_value>
+      </g:product_detail>` : ''}
     </item>`
   }).join('')
 
