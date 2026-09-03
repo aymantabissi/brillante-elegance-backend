@@ -727,6 +727,45 @@ router.patch(
 )
 
 // =====================================================
+// PATCH — CONFIRMATION COMMANDE
+// PATCH /api/orders/:id/confirm
+// MANAGER / ADMIN
+// =====================================================
+
+router.patch(
+  '/:id/confirm',
+  protect,
+  managerOrAdmin,
+  asyncHandler(async (req, res) => {
+    const { orderConfirmed } = req.body
+
+    if (typeof orderConfirmed !== 'boolean') {
+      return res.status(400).json({
+        message: 'orderConfirmed doit etre true ou false',
+      })
+    }
+
+    const order =
+      await Order.findByIdAndUpdate(
+        req.params.id,
+        { orderConfirmed },
+        {
+          new: true,
+          runValidators: true,
+        }
+      )
+
+    if (!order) {
+      return res.status(404).json({
+        message: 'Commande introuvable',
+      })
+    }
+
+    res.json(order)
+  })
+)
+
+// =====================================================
 // PATCH — ORDER STATUS
 // PATCH /api/orders/:id/status
 // MANAGER / ADMIN
@@ -757,6 +796,20 @@ router.patch(
       })
     }
 
+    const existing = await Order.findById(req.params.id)
+
+    if (!existing) {
+      return res.status(404).json({
+        message: 'Commande introuvable',
+      })
+    }
+
+    if (existing.orderConfirmed === false) {
+      return res.status(400).json({
+        message: 'Commande non confirmee — confirmez-la avant de modifier le traitement',
+      })
+    }
+
     const order =
       await Order.findByIdAndUpdate(
         req.params.id,
@@ -766,12 +819,6 @@ router.patch(
           runValidators: true,
         }
       )
-
-    if (!order) {
-      return res.status(404).json({
-        message: 'Commande introuvable',
-      })
-    }
 
     await creditCommissionIfEligible(order)
 
@@ -809,6 +856,20 @@ router.patch(
       })
     }
 
+    const existing = await Order.findById(req.params.id)
+
+    if (!existing) {
+      return res.status(404).json({
+        message: 'Commande introuvable',
+      })
+    }
+
+    if (existing.orderConfirmed === false) {
+      return res.status(400).json({
+        message: 'Commande non confirmee — confirmez-la avant de modifier la livraison',
+      })
+    }
+
     const order =
       await Order.findByIdAndUpdate(
         req.params.id,
@@ -818,12 +879,6 @@ router.patch(
           runValidators: true,
         }
       )
-
-    if (!order) {
-      return res.status(404).json({
-        message: 'Commande introuvable',
-      })
-    }
 
     res.json(order)
   })

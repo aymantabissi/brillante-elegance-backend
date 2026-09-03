@@ -75,6 +75,14 @@ const orderSchema = new mongoose.Schema(
     },
 
     // =========================
+    // CONFIRMATION (appel client avant traitement)
+    // =========================
+    orderConfirmed: {
+      type: Boolean,
+      default: true,
+    },
+
+    // =========================
     // ORDER PROCESSING STATUS
     // =========================
     orderStatus: {
